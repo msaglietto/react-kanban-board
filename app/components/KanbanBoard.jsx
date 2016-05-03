@@ -1,42 +1,36 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {Link} from 'react-router';
 
 import List from './List.jsx';
 
-const KanbanBoard = (props) => {
-  let cardModal = props.children && React.cloneElement(props.children, {
-    cards: props.cards,
-    cardCallbacks: props.cardCallbacks,
-  });
-  return (
-    <div className="app">
-      <Link to="/new" className="float-button">+</Link>
-      <List id="todo" title="To Do"
-        cards={props.cards.filter((card) => card.status === 'todo')}
-        taskCallbacks={props.taskCallbacks}
-        cardCallbacks={props.cardCallbacks}
-      />
-      <List id="in-progress" title="In Progress"
-        cards={props.cards.filter((card) => card.status === 'in-progress')}
-        taskCallbacks={props.taskCallbacks}
-        cardCallbacks={props.cardCallbacks}
-      />
-      <List id="done" title="Done"
-        cards={props.cards.filter((card) => card.status === 'done')}
-        taskCallbacks={props.taskCallbacks}
-        cardCallbacks={props.cardCallbacks}
-      />
-      {cardModal}
-    </div>
-  );
-};
 
-KanbanBoard.prototype.propTypes = {
+//warning.js:45 Warning: Stateless function components cannot be given refs
+//(See ref "child" in KanbanBoard created by DragDropContext(KanbanBoard)).
+//Attempts to access this ref will fail.
+class KanbanBoard extends Component {
+  render() {
+    return (
+      <div className="app">
+        <Link to="/new" className="float-button">+</Link>
+        <List id="todo" title="To Do"
+          cards={this.props.cards.filter(card => card.status === 'todo')}
+        />
+        <List id="in-progress" title="In Progress"
+          cards={this.props.cards.filter(card => card.status === 'in-progress')}
+        />
+        <List id="done" title="Done"
+          cards={this.props.cards.filter(card => card.status === 'done')}
+        />
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+KanbanBoard.propTypes = {
   cards: React.PropTypes.arrayOf(React.PropTypes.object),
-  taskCallbacks: React.PropTypes.object,
-  cardCallbacks: React.PropTypes.object,
   children: React.PropTypes.object,
 };
 

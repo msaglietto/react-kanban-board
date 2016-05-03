@@ -6,18 +6,11 @@ import {Link} from 'react-router';
 
 import CheckList from './CheckList.jsx';
 import constants from '../constants';
+import CardActionCreators from '../actions/CardActionCreators';
 
 class Card extends Component {
-  constructor() {
-    super();
-    this.state = {
-      showDetails: false,
-    };
-  }
-  toggleCard() {
-    this.setState({
-      showDetails: !this.state.showDetails,
-    });
+  toggleDetails() {
+    CardActionCreators.toggleCardDetails(this.props.id);
   }
   render() {
     const {connectDragSource, connectDropTarget} = this.props;
@@ -33,7 +26,7 @@ class Card extends Component {
         backgroundColor: this.props.color,
       };
 
-    if(this.state.showDetails) {
+    if(this.props.showDetails !== false) {
       cardDetails = (
         <div className="card-details">
           <span dangerouslySetInnerHTML={{__html:marked(this.props.description)}} />
@@ -49,7 +42,7 @@ class Card extends Component {
         <div className="card-edit">
           <Link to={'/edit/' + this.props.id}>&#9998;</Link>
         </div>
-        <div className={cadtTitleCss} onClick={this.toggleCard.bind(this)}>{this.props.title}</div>
+        <div className={cadtTitleCss} onClick={this.toggleDetails.bind(this)}>{this.props.title}</div>
         <ReactCSSTransitionGroup
           transitionName="toggle"
           transitionEnterTimeout={250}
@@ -79,7 +72,7 @@ const cardDragSpec = {
     };
   },
   endDrag(props){
-    props.cardCallbacks.persistCardDrag(props.id, props.status);
+    CardActionCreators.persistCardDrag(props);
   },
 };
 let collectDrag = (connect) => {
@@ -90,7 +83,9 @@ let collectDrag = (connect) => {
 const cardDropSpec = {
   hover(props, monitor) {
     const draggedId = monitor.getItem().id;
-    props.cardCallbacks.updatePosition(draggedId, props.id);
+    if(props.id !== draggedId) {
+      CardActionCreators.updateCardPosition(draggedId, props.id);
+    }
   },
 };
 let collectDrop = (connect) => {
@@ -105,8 +100,7 @@ Card.propTypes = {
   description: PropTypes.string,
   color: PropTypes.string,
   tasks: PropTypes.arrayOf(PropTypes.object),
-  taskCallbacks: PropTypes.object,
-  cardCallbacks: PropTypes.object,
+  showDetails: PropTypes.bool,
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
 };

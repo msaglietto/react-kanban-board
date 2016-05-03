@@ -6,7 +6,7 @@ var config = {
   entry: __dirname + '/app/App.js',
   output: {
     path: __dirname + '/public',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     loaders: [{
@@ -14,16 +14,16 @@ var config = {
       exclude: /node_modules/,
       loader: 'babel',
       query: {
-        presets: ['es2015', 'react']
-      }
-    }]
+        presets: ['es2015', 'react'],
+      },
+    }],
   },
   devServer: {
     contentBase: './public',
     colors: true,
     historyApiFallback: true,
-    inline: true
-  }
+    inline: true,
+  },
 };
 
 //Prod
@@ -33,8 +33,8 @@ if(process.env.NODE_ENV === 'production') {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({comments: false}),
     new webpack.DefinePlugin({
-      'process.env' : {NODE_ENV: JSON.stringify('production')}
-    })
+      'process.env' : {NODE_ENV: JSON.stringify('production')},
+    }),
   ];
 }
 
